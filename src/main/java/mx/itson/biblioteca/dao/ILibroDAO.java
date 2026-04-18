@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mx.itson.biblioteca;
+package mx.itson.biblioteca.dao;
 
+import mx.itson.biblioteca.modelo.Libro;
 import java.util.List;
 
 /**

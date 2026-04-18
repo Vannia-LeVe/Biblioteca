@@ -2,8 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mx.itson.biblioteca;
+package mx.itson.biblioteca.main;
 
+import mx.itson.biblioteca.dao.ILibroDAO;
+import mx.itson.biblioteca.dao.LibroDAO;
+import mx.itson.biblioteca.modelo.Libro;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
