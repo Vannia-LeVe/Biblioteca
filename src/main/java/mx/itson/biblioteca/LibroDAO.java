@@ -34,7 +34,7 @@ public class LibroDAO implements ILibroDAO {
     }
 
     @Override
-    public Libro buscarPorld(int id) {
+    public Libro buscarPorId(int id) {
         return em.find(Libro.class, id);
     }
 
@@ -48,7 +48,7 @@ public class LibroDAO implements ILibroDAO {
 
     @Override
     public void eliminar(int id) {
-        Libro libro = buscarPorld(id);
+        Libro libro = buscarPorId(id);
         if (libro != null) {
             EntityTransaction tx = em.getTransaction();
             tx.begin();

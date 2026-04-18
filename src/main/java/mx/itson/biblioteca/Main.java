@@ -74,7 +74,7 @@ public class Main {
                         System.out.print("Ingresa el ID del libro que deseas actualizar: ");
                         int idActualizar = Integer.parseInt(scanner.nextLine());
                         
-                        Libro libroAActualizar = libroDAO.buscarPorld(idActualizar);
+                        Libro libroAActualizar = libroDAO.buscarPorId(idActualizar);
                         if(libroAActualizar != null){
                             System.out.print("Nuevo Título: ");
                             libroAActualizar.setTitulo(scanner.nextLine());
@@ -106,7 +106,7 @@ public class Main {
                         System.out.print("Ingresa el ID a buscar: ");
                         int idBuscar = Integer.parseInt(scanner.nextLine());
                         
-                        Libro encontrado = libroDAO.buscarPorld(idBuscar);
+                        Libro encontrado = libroDAO.buscarPorId(idBuscar);
                         if (encontrado == null) {
                             System.out.println("No se encontró ningún libro con ese ID.");
                         } else {
@@ -115,7 +115,7 @@ public class Main {
                         break;
 
                     case 6:
-                        System.out.println("Saliendo del sistema... ¡Hasta luego!");
+                        System.out.println("Saliendo del sistema...");
                         em.close();
                         emf.close();
                         break;

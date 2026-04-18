@@ -13,7 +13,7 @@ import java.util.List;
 public interface ILibroDAO {
     void insertar(Libro libro);
     List<Libro> obtenerTodos();
-    Libro buscarPorld(int id);
+    Libro buscarPorId(int id);
     void actualizar(Libro libro);
     void eliminar(int id);
 }
