@@ -11,9 +11,9 @@ import java.util.List;
  * @author @rocta
  */
 public interface ILibroDAO {
-    boolean agregar(Libro libro);
-    List<Libro> consultarTodos();
-    boolean actualizar(Libro libro);
-    boolean eliminar(int id);
-    List<Libro> buscarPorCriterio(String criterio);
+    void insertar(Libro libro);
+    List<Libro> obtenerTodos();
+    Libro buscarPorld(int id);
+    void actualizar(Libro libro);
+    void eliminar(int id);
 }

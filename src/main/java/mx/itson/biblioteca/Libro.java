@@ -4,28 +4,33 @@
  */
 package mx.itson.biblioteca;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 /**
  *
  * @author @rocta
  */
+@Entity
 public class Libro {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String titulo;
     private String autor;
     private int anioPublicacion;
-    private boolean disponible;
+    private String genero;
 
-    // Constructor vacío
-    public Libro() {
-    }
+    public Libro() {}
 
-    // Constructor completo
-    public Libro(int id, String titulo, String autor, int anioPublicacion, boolean disponible) {
-        this.id = id;
+    public Libro(String titulo, String autor, int anioPublicacion, String genero) {
         this.titulo = titulo;
         this.autor = autor;
         this.anioPublicacion = anioPublicacion;
-        this.disponible = disponible;
+        this.genero = genero;
     }
 
     // Getters y Setters
@@ -41,12 +46,12 @@ public class Libro {
     public int getAnioPublicacion() { return anioPublicacion; }
     public void setAnioPublicacion(int anioPublicacion) { this.anioPublicacion = anioPublicacion; }
 
-    public boolean isDisponible() { return disponible; }
-    public void setDisponible(boolean disponible) { this.disponible = disponible; }
+    public String getGenero() { return genero; }
+    public void setGenero(String genero) { this.genero = genero; }
 
     @Override
     public String toString() {
         return "ID: " + id + " | Título: " + titulo + " | Autor: " + autor + 
-               " | Año: " + anioPublicacion + " | Estado: " + (disponible ? "Disponible" : "Prestado");
+               " | Año: " + anioPublicacion + " | Género: " + genero;
     }
 }

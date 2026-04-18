@@ -4,6 +4,9 @@
  */
 package mx.itson.biblioteca;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,23 +16,24 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String[] args) {
-        IConexionBD conexion = new ConexionBD();
-        ILibroDAO libroDAO = new LibroDAO(conexion);
+        // Inicialización de JPA
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("BibliotecaPU");
+        EntityManager em = emf.createEntityManager();
+        
+        ILibroDAO libroDAO = new LibroDAO(em);
         Scanner scanner = new Scanner(System.in);
         int opcion = 0;
 
         System.out.println("¡Bienvenido al Sistema de Gestión de la Biblioteca!");
-        System.out.println("Hecho por: ");
-        System.out.println("Vannia Jaretzy León Velázquez");
-        System.out.println("Raúl Octavio Alvarado Castro");
+        System.out.println("Hecho por: Vannia Jaretzy León Velázquez y Raúl Octavio Alvarado Castro");
 
         while (opcion != 6) {
             System.out.println("\n================ MENÚ PRINCIPAL ================");
             System.out.println("1. Agregar un nuevo libro");
-            System.out.println("2. Consultar todos los libros");
+            System.out.println("2. Mostrar todos los libros");
             System.out.println("3. Actualizar un libro existente");
             System.out.println("4. Eliminar un libro");
-            System.out.println("5. Buscar libros por título o autor");
+            System.out.println("5. Buscar libro por ID");
             System.out.println("6. Salir del sistema");
             System.out.print("Elige una opción: ");
 
@@ -45,20 +49,17 @@ public class Main {
                         String autor = scanner.nextLine();
                         System.out.print("Año de publicación: ");
                         int anio = Integer.parseInt(scanner.nextLine());
-                        System.out.print("¿Está disponible? (1 = Sí, 2 = No): ");
-                        boolean disponible = scanner.nextLine().equals("1");
+                        System.out.print("Género: ");
+                        String genero = scanner.nextLine();
 
-                        Libro nuevoLibro = new Libro(0, titulo, autor, anio, disponible);
-                        if (libroDAO.agregar(nuevoLibro)) {
-                            System.out.println("✅ ¡Libro agregado con éxito! ID asignado: " + nuevoLibro.getId());
-                        } else {
-                            System.out.println("❌ Ocurrió un error al agregar el libro.");
-                        }
+                        Libro nuevoLibro = new Libro(titulo, autor, anio, genero);
+                        libroDAO.insertar(nuevoLibro);
+                        System.out.println("✅ ¡Libro agregado con éxito!");
                         break;
 
                     case 2:
                         System.out.println("\n--- CATÁLOGO DE LIBROS ---");
-                        List<Libro> todosLosLibros = libroDAO.consultarTodos();
+                        List<Libro> todosLosLibros = libroDAO.obtenerTodos();
                         if (todosLosLibros.isEmpty()) {
                             System.out.println("La biblioteca está vacía.");
                         } else {
@@ -70,101 +71,63 @@ public class Main {
 
                     case 3:
                         System.out.println("\n--- ACTUALIZAR LIBRO ---");
-                        List<Libro> librosParaActualizar = libroDAO.consultarTodos();
-                        
-                        // Validar si hay libros antes de pedir el ID
-                        if (librosParaActualizar.isEmpty()) {
-                            System.out.println("La biblioteca está vacía. No hay libros para actualizar.");
-                            break; 
-                        }
-                        
-                        System.out.println("Libros disponibles:");
-                        for (Libro l : librosParaActualizar) {
-                            System.out.println(l.toString());
-                        }
-                        
-                        System.out.print("\nIngresa el ID del libro que deseas actualizar: ");
+                        System.out.print("Ingresa el ID del libro que deseas actualizar: ");
                         int idActualizar = Integer.parseInt(scanner.nextLine());
                         
-                        System.out.print("Nuevo Título: ");
-                        String nuevoTitulo = scanner.nextLine();
-                        System.out.print("Nuevo Autor: ");
-                        String nuevoAutor = scanner.nextLine();
-                        System.out.print("Nuevo Año de publicación: ");
-                        int nuevoAnio = Integer.parseInt(scanner.nextLine());
-                        System.out.print("¿Está disponible? (1 = Sí, 2 = No): ");
-                        boolean nuevaDisponibilidad = scanner.nextLine().equals("1");
+                        Libro libroAActualizar = libroDAO.buscarPorld(idActualizar);
+                        if(libroAActualizar != null){
+                            System.out.print("Nuevo Título: ");
+                            libroAActualizar.setTitulo(scanner.nextLine());
+                            System.out.print("Nuevo Autor: ");
+                            libroAActualizar.setAutor(scanner.nextLine());
+                            System.out.print("Nuevo Año de publicación: ");
+                            libroAActualizar.setAnioPublicacion(Integer.parseInt(scanner.nextLine()));
+                            System.out.print("Nuevo Género: ");
+                            libroAActualizar.setGenero(scanner.nextLine());
 
-                        Libro libroAActualizar = new Libro(idActualizar, nuevoTitulo, nuevoAutor, nuevoAnio, nuevaDisponibilidad);
-                        if (libroDAO.actualizar(libroAActualizar)) {
+                            libroDAO.actualizar(libroAActualizar);
                             System.out.println("✅ ¡Libro actualizado correctamente!");
                         } else {
-                            System.out.println("❌ No se pudo actualizar. Verifica que el ID exista.");
+                            System.out.println("❌ Libro no encontrado.");
                         }
                         break;
 
                     case 4:
                         System.out.println("\n--- ELIMINAR LIBRO ---");
-                        List<Libro> librosParaEliminar = libroDAO.consultarTodos();
-                        
-                        // Validar si hay libros antes de pedir el ID
-                        if (librosParaEliminar.isEmpty()) {
-                            System.out.println("La biblioteca está vacía. No hay libros para eliminar.");
-                            break;
-                        }
-                        
-                        System.out.println("Libros disponibles:");
-                        for (Libro l : librosParaEliminar) {
-                            System.out.println(l.toString());
-                        }
-                        
-                        System.out.print("\nIngresa el ID del libro que deseas eliminar: ");
+                        System.out.print("Ingresa el ID del libro que deseas eliminar: ");
                         int idEliminar = Integer.parseInt(scanner.nextLine());
                         
-                        System.out.print("¿Estás seguro? (S/N): ");
-                        String confirmacion = scanner.nextLine();
-                        if (confirmacion.equalsIgnoreCase("S")) {
-                            if (libroDAO.eliminar(idEliminar)) {
-                                System.out.println("✅ ¡Libro eliminado del sistema!");
-                            } else {
-                                System.out.println("❌ No se pudo eliminar. Verifica que el ID exista.");
-                            }
-                        } else {
-                            System.out.println("Operación cancelada.");
-                        }
+                        libroDAO.eliminar(idEliminar);
+                        System.out.println("✅ Petición procesada.");
                         break;
 
                     case 5:
-                        System.out.println("\n--- BUSCAR LIBRO ---");
-                        System.out.print("Ingresa el título o autor a buscar: ");
-                        String criterio = scanner.nextLine();
+                        System.out.println("\n--- BUSCAR LIBRO POR ID ---");
+                        System.out.print("Ingresa el ID a buscar: ");
+                        int idBuscar = Integer.parseInt(scanner.nextLine());
                         
-                        List<Libro> resultados = libroDAO.buscarPorCriterio(criterio);
-                        if (resultados.isEmpty()) {
-                            System.out.println("No se encontraron libros que coincidan con: '" + criterio + "'");
+                        Libro encontrado = libroDAO.buscarPorld(idBuscar);
+                        if (encontrado == null) {
+                            System.out.println("No se encontró ningún libro con ese ID.");
                         } else {
-                            System.out.println("Resultados de la búsqueda:");
-                            for (Libro l : resultados) {
-                                System.out.println(l.toString());
-                            }
+                            System.out.println("Resultado: " + encontrado.toString());
                         }
                         break;
 
                     case 6:
                         System.out.println("Saliendo del sistema... ¡Hasta luego!");
+                        em.close();
+                        emf.close();
                         break;
 
                     default:
-                        System.out.println("⚠️ Opción no válida. Por favor, elige un número del 1 al 6.");
+                        System.out.println("⚠️ Opción no válida.");
                         break;
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("⚠️ Error: Debes ingresar un número válido.");
             } catch (Exception e) {
-                System.out.println("⚠️ Ocurrió un error inesperado: " + e.getMessage());
+                System.out.println("⚠️ Ocurrió un error: " + e.getMessage());
             }
         }
-        
         scanner.close();
     }
 }
